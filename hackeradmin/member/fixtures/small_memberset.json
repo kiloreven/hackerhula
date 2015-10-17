@@ -1,0 +1,71 @@
+[
+{
+  "fields": {
+    "access_card": "213123131",
+    "picture": "",
+    "hausmania_deposit": false,
+    "handle": "jdog",
+    "name": "John Ulrik Doe",
+    "unix_uid": 10001,
+    "unix_username": "jdog",
+    "member_since": "2015-10-17T13:06:05.311Z",
+    "active_membership": true,
+    "memberid": 1001,
+    "comment": "Often grumpy.",
+    "nettlaug_member": true,
+    "hausmania_keynumber": 333,
+    "last_modified": "2015-10-17T13:22:15.280Z",
+    "authorized_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNDFyhPsL2JqXUHR8I8us4k1IvpIOKpDbGezeQf31MuvpQqVoROJtxDMY2InWF9RtjTUdyUiWzWvs0rhrCMKWR5wiSaeVMuS/AXoBw7yb9FTQKXzilYp74nlxarONIOwh+ZFRg9IQWZwkbjs1hIZULrcpuHIX9rcIz6B+xwap5xAm6tonkB5x57ct6V9mF8umtcYaZYdNdsLbHrvGGcmUlZPHHpajMIlxTiuQDTjYlUfTnFP6jO/NJyp24k7BzL3s+x+iEirQgAcMP4GrIszY2KjTuC2v8XHDCeTam/GicQvJE5CjPF9+qOFvUVrPYXYJ7+KD4ROoozsq0Ms8ccISV keke",
+    "address": "Gateveien 37, 1234 Otta",
+    "email": "foo@bar.invalid"
+  },
+  "model": "member.member",
+  "pk": 1
+},
+{
+  "fields": {
+    "access_card": "123456789",
+    "picture": "",
+    "hausmania_deposit": true,
+    "handle": "pdog",
+    "name": "Peter Doe",
+    "unix_uid": 10002,
+    "unix_username": "pdog",
+    "member_since": "2015-10-17T13:20:57.722Z",
+    "active_membership": true,
+    "memberid": 1002,
+    "comment": "likes pie.",
+    "nettlaug_member": true,
+    "hausmania_keynumber": 300,
+    "last_modified": "2015-10-17T14:45:40.037Z",
+    "authorized_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGH5KxiozMaPYGBGwvbSqSQHf/MrbwoPsSszTgTKG+54XHYompOH5Na76eTJdEsWxihMMhJe2H8Pcb4QfajCrO6Kpo5pSsK1P9Ei9tDIv9t5C6jdgQc6vBHKhPXxL4XI7izRgkrJZ4WhX9Iq5qg+IC7kgbazGLBUGCGWtEF2U0mdrMrAHBElIlMgUh+IwoZSxywovPfhL/Y+f3NCwauC+3865vcS4ZzK6C7y3SpyUrWuaNjyq03HI7NpMkVWjIxP83Fl9ir6/EwZK1X247Na0Fw9iX/fs/ILSiI/8oQxM2ubddvUyG8aV/yBd4DVTHuGY055CI1n5nBIBO2QMrd4MN lkarsten@jungel.local",
+    "address": "Veigata 22, 4321 Toten",
+    "email": "peter@bar.invalid"
+  },
+  "model": "member.member",
+  "pk": 2
+},
+{
+  "fields": {
+    "access_card": "",
+    "picture": "",
+    "hausmania_deposit": false,
+    "handle": "fffffredrik",
+    "name": "Fredrik Firfisle",
+    "unix_uid": 10003,
+    "unix_username": "fredrik",
+    "member_since": "2015-10-17T14:47:51.962Z",
+    "active_membership": true,
+    "memberid": 1003,
+    "comment": "En litt lengre notatstreng for \u00e5 se om det lar seg gj\u00f8re \u00e5 brekke teksten korrekt i de fremtidige rapportene.\r\n\r\nDet er ogs\u00e5\r\n\r\nlinjeskift\r\n\r\ni denne paragrafen.",
+    "nettlaug_member": true,
+    "hausmania_keynumber": null,
+    "last_modified": "2015-10-17T14:47:51.962Z",
+    "authorized_keys": "",
+    "address": "Himmelveien 1, 7001 BARTEBY",
+    "email": "fredik@funky.invalid"
+  },
+  "model": "member.member",
+  "pk": 3
+}
+]
