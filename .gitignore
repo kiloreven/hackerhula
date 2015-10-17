@@ -1,0 +1,4 @@
+**.pyc
+**sw[po]
+/venv
+db.sqlite3
