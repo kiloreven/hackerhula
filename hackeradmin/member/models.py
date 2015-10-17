@@ -29,6 +29,7 @@ class Member(models.Model):
     def __str__(self):
         return "<Member \"%s(%s)\">" % (self.name, self.handle or "NOHANDLE")
 
+
 class Membership(models.Model):
     start_date = models.DateTimeField("Membership start date")
     running = models.BooleanField("This membership is continous")
