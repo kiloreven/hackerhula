@@ -11,6 +11,7 @@ Glorified spreadsheet to manage:
 Development setup
 -----------------
 
+::
     git clone ..
     sudo apt-get install python-virtualenv python-pil
     virtualenv --system-site-packages venv
