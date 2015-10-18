@@ -1,0 +1,41 @@
+[
+{
+  "fields": {
+    "access_start": "2010-10-18T10:32:03Z",
+    "description": "The additional notes are empty.",
+    "access_end": "2020-10-19T12:11:47Z",
+    "cardname": "l\u00e5nekort1",
+    "access_token": "314159265",
+    "enabled": true,
+    "contactinfo": "Fornavn Etternavn, +47 98765432"
+  },
+  "model": "member.physicalaccess",
+  "pk": 1
+},
+{
+  "fields": {
+    "access_start": "2010-10-18T10:38:30Z",
+    "description": "This is an expired card.",
+    "access_end": "2010-10-18T12:39:19Z",
+    "cardname": "utg\u00e5ttkort1",
+    "access_token": "271828182",
+    "enabled": true,
+    "contactinfo": "Fornavn Etternavn, +47 98765432"
+  },
+  "model": "member.physicalaccess",
+  "pk": 2
+},
+{
+  "fields": {
+    "access_start": "2010-10-18T10:39:39Z",
+    "description": "This is an access card that is not enabled any more.",
+    "access_end": "2020-10-18T12:40:17Z",
+    "cardname": "avsl\u00e5ttkort1",
+    "access_token": "602214129",
+    "enabled": false,
+    "contactinfo": "Fornavn Etternavn, +47 98765432"
+  },
+  "model": "member.physicalaccess",
+  "pk": 3
+}
+]
