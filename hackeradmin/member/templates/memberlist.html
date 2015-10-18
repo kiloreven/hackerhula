@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Member list{% endblock %}
+{% block main %}
+
+<h1>List of members</h1>
+<p>This is the list of paying members of Hackeriet. We currently have {{ members|length }} members.</p>
+<br/>
+
+<table class="table table-striped table-bordered table-condensed table-hover sortable">
+<thead>
+  <tr>
+    <th data-defaultsort="disabled">Name</th>
+    <th>Handle</th>
+    <th>Email</th>
+    <th>Last changed</th>
+    <th></th>
+  </tr>
+</thead>
+<tbody>
+{%for member in members %}
+  <tr>
+    <td>{{ member.name }}</td>
+    <td>{{ member.handle }}</td>
+    <td><a href="mailto:{{ member.email }}">{{ member.email }}</a></td>
+    <td>{{ member.last_modified }}</td>
+    <td><a href="../admin/member/member/{{member.id}}">edit</a></td>
+  </tr>
+{%endfor%}
+</tbody>
+</table>
+{% endblock %}

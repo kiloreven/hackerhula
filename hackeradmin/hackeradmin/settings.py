@@ -87,12 +87,17 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+#LANGUAGE_CODE = 'nb_NO'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 USE_I18N = True
 
-USE_L10N = True
+#USE_L10N = True
+USE_L10N = False
+
+DATETIME_FORMAT="Y-m-d H:i:s T"
+DATE_FORMAT="Y-m-d"
 
 USE_TZ = True
 
@@ -101,3 +106,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/hackeradmin/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)

@@ -1,0 +1,28 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="en">
+<head>
+    <title>{% block title %}{%endblock%}</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "bootstrap-sortable.min.css" %}">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style type="text/css">
+     .table-hover tbody tr:hover td{background-color:lightyellow}
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<div class="container">
+{% block main %}{% endblock %}
+</div>
+<script src="{% static "jquery-2.0.3.min.js"%}"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js"%}"></script>
+<script src="{% static "bootstrap-sortable.min.js"%}"></script>
+<script src="{% static "moment.min.js"%}"></script>
+</body>
+</html>

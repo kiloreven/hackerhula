@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from pytz import utc
 
 class Member(models.Model):
     memberid = models.IntegerField(help_text="Four digits, increasing from 1000.", unique=True)
@@ -36,6 +37,44 @@ class Member(models.Model):
             self.memberid, self.name, self.handle or "NOHANDLE",
             "active member" if self.active_membership else "dormant member")
 
+class PhysicalAccess(models.Model):
+    """
+        Additional access cards.
+
+        Envisioned use is access cards used for events and similar.
+
+        Note that this is a list of cards, not a list of card-access-periods.
+    """
+    cardname = models.CharField("Short name/description of the card", max_length=200)
+    contactinfo = models.CharField("Name and cellphone to person in charge of card",
+        max_length=200)
+
+    enabled = models.BooleanField("Is this access card enabled?", default=True,
+        help_text="Only applies if within the described time frame.")
+
+    access_token = models.CharField("Access token presented by card.",
+        max_length=200, unique=True)
+
+    access_start = models.DateTimeField("Card is valid starting from",
+                                        default=datetime.utcnow)
+    access_end = models.DateTimeField("Card is valid until")
+
+    description = models.TextField("Additional notes", blank=True)
+
+    def __unicode__(self):
+        return "Access card %s managed by %s" % \
+            (self.cardname, self.contactinfo)
+
+    def valid(self):
+        "Should the access card be granted access right now?"
+        now = datetime.now(utc)
+
+        if not self.enabled:
+            return False
+        if self.access_start > now or self.access_end < now:
+            return False
+
+        return True
 
 #class Membership(models.Model):
 #    start_date = models.DateTimeField("Membership start date")
