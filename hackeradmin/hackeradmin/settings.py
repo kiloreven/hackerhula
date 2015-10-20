@@ -10,6 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
+try:
+    from localsettings import *
+except ImportError:
+    pass
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
@@ -81,6 +86,17 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+if os.uname()[1] == "blade":
+    DATABASES = {'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'hackeradmindb',
+        'USER': 'hackeradmin',
+        'PASSWORD': dbpasswd,    # from localsettings
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        }
+    }
 
 
 # Internationalization
