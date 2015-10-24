@@ -5,10 +5,12 @@ from pprint import pprint
 from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 from hackeradmin import settings
 from models import Member, PhysicalAccess
 
+@login_required
 def memberlist(request):
     res = {}
     res["members"] = Member.objects.all()
