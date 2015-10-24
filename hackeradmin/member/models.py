@@ -32,8 +32,8 @@ class Member(models.Model):
     def has_unix_account(self):
         return self.unix_uid is not None
 
-    def __str__(self):
-        return "[%i] %s aka %s (%s)" % (
+    def __unicode__(self):
+        return u"[%i] %s aka %s (%s)" % (
             self.memberid, self.name, self.handle or "NOHANDLE",
             "active member" if self.active_membership else "dormant member")
 
