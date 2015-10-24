@@ -14,7 +14,7 @@ Development setup
 This is how you get going::
 
   git clone ..
-  sudo apt-get install python-virtualenv python-pil
+  sudo apt-get install python-virtualenv python-pil python-psycopg2
   virtualenv --system-site-packages venv
   . ./venv/bin/activate
   pip install -r requirements.txt
