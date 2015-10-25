@@ -8,6 +8,7 @@ class Member(models.Model):
     handle = models.CharField(max_length=200, blank=True)
     address = models.CharField(max_length=500)
     picture = models.ImageField("Picture of member (keycard?).", blank=True)
+    cellphone = models.CharField("Cellhone number)", max_length=200, blank=True)
 
     email = models.EmailField("Member email address")
 
