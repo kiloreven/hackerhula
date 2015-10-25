@@ -2,6 +2,6 @@
 # Installation-specific configuration, usually kept in localsettings.py.
 #
 dbpasswd = 'FOO'
-DOORCLIENT_USER = "foo"
-DOORCLIENT_PASSWORD = "foo"
+APICLIENT_USER = "foo"
+APICLIENT_PASSWORD = "foo"
 

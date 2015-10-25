@@ -16,24 +16,33 @@ def memberlist(request):
     res["members"] = Member.objects.all()
     return render(request, "memberlist.html", res)
 
-def dooraccess(request):
+
+def authscreen():
+    response = HttpResponse("Unauthorized", status=401)
+    response['www-authenticate'] = 'basic realm="restricted"'
+    return response
+
+
+# Rewrite into a decorator.
+def basicauth(request):
     accepted = False
     if request.user.is_authenticated():
         accepted = True
 
     elif 'HTTP_AUTHORIZATION' in request.META:
+        pprint(request.META)
         auth = request.META['HTTP_AUTHORIZATION'].split()
         if len(auth) == 2 and auth[0].lower() == "basic":
             username, pw = b64decode(auth[1]).split(':', 1)
-            if username == getattr(settings, "DOORCLIENT_USER", None) and \
-                pw == getattr(settings, "DOORCLIENT_PASSWORD", None):
+            if username == getattr(settings, "APICLIENT_USER", None) and \
+                pw == getattr(settings, "APICLIENT_PASSWORD", None):
                 accepted = True
+    return accepted
 
-    if not accepted:
-        response = HttpResponse()
-        response.status_code = 401
-        response['www-authenticate'] = 'basic realm="doorclient"'
-        return response
+
+def dooraccess(request):
+    if not basicauth(request):
+        return authscreen()
 
     res = []
     default_expiry = datetime.today() + timedelta(days=30)
@@ -57,3 +66,24 @@ def dooraccess(request):
 
     return HttpResponse(json.dumps(res, indent=2), content_type="application/json")
 
+def unixaccount(request):
+    if not basicauth(request):
+        return authscreen()
+
+    res = []
+    for member in Member.objects.filter(active_membership=True):
+        if member.unix_uid is None or len(member.unix_username) == 0:
+            continue
+        if len(member.authorized_keys) == 0:
+            continue
+        # Outputting the key string verbatim is done on purpose. Systems should
+        # do their own checks.
+        res += [{
+            'name': member.name,
+            'username': member.unix_username,
+            'uid': member.unix_uid,
+            'authorized_keys': member.authorized_keys,
+            'last_modified': member.last_modified.isoformat(),
+        }]
+
+    return HttpResponse(json.dumps(res, indent=2), content_type="application/json")
