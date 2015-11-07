@@ -7,9 +7,12 @@ import sys
 import pwd
 import json
 import sets
+import base64
 import shutil
 import argparse
-
+import urllib2
+import urllib
+import ConfigParser
 
 MANAGED_UID_RANGE = (10000, 20000)
 
@@ -186,25 +189,68 @@ def detect_unmanaged_logins(accounts):
             results.append({ 'uid' : uid, 'status' : 'spurious_user', 'err' : 'Uid %d (%s) is in managed range, but not known by hackeradmin' % (u.pw_uid, u.pw_name) })
     return results
 
+def slurp(url, params={}, headers={}):
+  params = urllib.urlencode(params, doseq=True)
+  request = urllib2.Request(url)
+  for (k,v) in headers.iteritems():
+    request.add_header(k, v)
+  response = urllib2.urlopen(request)
+  content = response.read()
+  response.close()
+  return content
+
+def cmd_file(filename):
+    if not os.path.isfile(filename):
+        print >>sys.stderr, "Error: %s is not a readable file" % args.file
+        sys.exit(1)
+
+    results = []
+    with open(filename) as f:
+        accounts = json.load(f)
+        results = synchronize_accounts(accounts)
+        results = results + detect_unmanaged_logins(accounts)
+    print(results)
+
+def cmd_poll():
+    cfgfile = os.path.expanduser("~/.hackeradmin/config")
+    if not os.path.isfile(cfgfile):
+        print >>sys.stderr, "Error: Missing configuration file ~/.hackeradmin/config"
+        sys.exit(1)
+
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(cfgfile))
+    username = config.get("default", "api_user")
+    password = config.get("default", "api_password")
+    url = config.get("default", "base_url")
+
+    basic_auth = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+    doc = slurp(url + "/member/unixaccount", headers={ "Authorization" : "Basic %s" % basic_auth })
+    accounts = json.loads(doc)
+    results = []
+    results = synchronize_accounts(accounts)
+    results = results + detect_unmanaged_logins(accounts)
+    print(results)
+
 def main():
     parser = argparse.ArgumentParser(description='Synchronize Unix users on local system based on hackeradmin Unix account snapshot')
-    parser.add_argument('accounts', help='JSON file with Unix accounts')
+    parser.add_argument('-f', '--file', help='JSON file with Unix accounts')
+    parser.add_argument('--poll', help="Pull Unix account snapshot from online", action='store_true')
     parser.add_argument('--dry-run', help='Compute all desired changes, but do not modify the system', action='store_true')
 
     args = parser.parse_args()
 
     Config.dry_run = args.dry_run
 
-    if not os.path.isfile(args.accounts):
-        print >>sys.stderr, "Error: %s is not a readable file" % args.accounts
+    if not (args.file or args.poll):
+        parser.print_help()
         sys.exit(1)
 
-    with open(args.accounts) as f:
-        accounts = json.load(f)
-        results = []
-        results = synchronize_accounts(accounts)
-        results = results + detect_unmanaged_logins(accounts)
-        print(results)
+    print args.file
+
+    if args.file:
+        cmd_file(args.file)
+    elif args.poll:
+        cmd_poll()
 
 if __name__ == '__main__':
     main()
