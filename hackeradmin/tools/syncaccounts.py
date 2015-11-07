@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import sys
 import pwd
 import json
@@ -18,8 +19,9 @@ class Config:
 def shell(cmd):
     if Config.dry_run:
         print(cmd)
+        return True
     else:
-        os.system(cmd)
+        return os.system(cmd) == 0
 
 def check_username_matches_pid(account):
     uid = account['uid']
@@ -46,8 +48,35 @@ def uid_exists(account):
     except KeyError:
         return False
 
+def validate(string, legal_chars):
+    p = re.compile(ur"^[%s]*$" % legal_chars, re.UNICODE)
+    if p.match(string):
+        return string
+    return None
+
+def validate_name(name):
+    return validate(name, u"a-zA-Z0-9äöüÄÖÜæøåÆØÅáéóàèòâêô\- ")
+
+def validate_username(username):
+    return validate(username, u"a-z")
+
+def validate_uid(uid):
+    if uid >= MANAGED_UID_RANGE[0] and uid <= MANAGED_UID_RANGE[1]:
+        return uid
+    return None
+
 def create_user(account):
-    raise "not impl"
+    if not validate_username(account['username']):
+        return False, "Username invalid"
+    if not validate_name(account['name']):
+        return False, "Name invalid"
+    if not validate_uid(account['uid']):
+        return False, "Name invalid"
+    if not shell('adduser %s --disabled-password --gecos "%s,,," --uid %d' % (account['username'], account['name'], account['uid'])):
+        return False, "Adduser invocation failed"
+    if not add_authorized_key(account):
+        return False, "Failed to add SSH keys"
+    return True, None
 
 def name_matches(account):
     u = pwd.getpwuid(account['uid'])
@@ -74,7 +103,7 @@ def authorized_keys_contains_key(account):
     return desired.issubset(found)
 
 def add_authorized_key(account):
-    keyfile = os.path.expanduser("~%s/.ssh/authorized_keys" % account["username"])
+    keyfile = os.path.expanduser("~%s/.ssh/authorized_keys" % account['username'])
     keys = sets.Set(key.strip() for key in account['authorized_keys'].split("\n"))
     if os.path.isfile(keyfile):
         with open(keyfile) as f:
@@ -82,7 +111,7 @@ def add_authorized_key(account):
                 keys.add(line.strip())
     else:
         if not Config.dry_run:
-            ensure_dir(os.path.expanduser("~%s/.ssh" % account["username"]), account["uid"])
+            ensure_dir(os.path.expanduser("~%s/.ssh" % account['username']), account['uid'])
     if not Config.dry_run:
         with open(keyfile, "w") as f:
             for key in keys:
@@ -90,6 +119,10 @@ def add_authorized_key(account):
         fd = os.open(keyfile, os.O_RDONLY)
         os.fchmod(fd, 0644)
         os.close(fd)
+        return True
+    else:
+        print("Add SSH key for user %s" % account['username'])
+        return True
 
 def login_shell_is_enabled(account):
     u = pwd.getpwuid(account['uid'])
@@ -108,8 +141,11 @@ def synchronize_accounts(accounts):
             results.append({ 'uid' : uid, 'status' : 'username_uid_mismatch', 'error' : err })
             continue
         if not uid_exists(account):
-            create_user(account)
-            results.append({ 'uid' : uid, 'status' : 'user_created' })
+            ok, err = create_user(account)
+            if ok:
+                results.append({ 'uid' : uid, 'status' : 'user_created' })
+            else:
+                results.append({ 'uid' : uid, 'status' : 'user_creation_failed', 'error' : err })
             continue
         if not name_matches(account):
             update_name(account)
@@ -130,7 +166,7 @@ def detect_unmanaged_logins(accounts):
         if uid < MANAGED_UID_RANGE[0] or uid > MANAGED_UID_RANGE[1]:
             continue
         if uid not in known_accounts:
-            results.append({ 'uid' : uid, 'err' : 'Spurious UID on system in managed UID range that is not known by hackeradmin' })
+            results.append({ 'uid' : uid, 'err' : 'Spurious UID on system in managed UID range that is not known by hackeradmin (%s/%d)' % (u.pw_name, u.pw_uid) })
     return results
 
 def main():
@@ -155,3 +191,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
