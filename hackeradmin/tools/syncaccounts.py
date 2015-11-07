@@ -67,11 +67,11 @@ def validate_uid(uid):
 
 def create_user(account):
     if not validate_username(account['username']):
-        return False, "Username invalid"
+        return False, "Username contains bad characters"
     if not validate_name(account['name']):
-        return False, "Name invalid"
+        return False, "Name contains bad characters"
     if not validate_uid(account['uid']):
-        return False, "Name invalid"
+        return False, "Uid is outside managed range"
     if not shell('adduser %s --disabled-password --gecos "%s,,," --uid %d' % (account['username'], account['name'], account['uid'])):
         return False, "Adduser invocation failed"
     if not add_authorized_key(account):
@@ -84,7 +84,13 @@ def name_matches(account):
     return name == account['name']
 
 def update_name(account):
-    shell('chfn -f "%s" %s' % (account['name'], account['username']))
+    if not validate_name(account['name']):
+        return False, "New name contains bad characters"
+    if not validate_username(account['username']):
+        return False, "Username contains bad characters"
+    if not shell('chfn -f "%s" %s' % (account['name'], account['username'])):
+        return False, "Failed to execute chfn"
+    return True, None
 
 def ensure_dir(dir, uid):
     if not os.path.isdir(dir):
@@ -94,7 +100,7 @@ def ensure_dir(dir, uid):
     os.close(fd)
 
 def authorized_keys_contains_key(account):
-    keyfile = os.path.expanduser("~%s/.ssh/authorized_keys" % account["username"])
+    keyfile = os.path.expanduser("~%s/.ssh/authorized_keys" % account['username'])
     desired = sets.ImmutableSet(key.strip() for key in account['authorized_keys'].split("\n"))
     found = sets.ImmutableSet()
     if os.path.isfile(keyfile):
@@ -130,7 +136,9 @@ def login_shell_is_enabled(account):
 
 def enable_login_shell(account):
     # FIXME store preferred shell somewhere?
-    shell("chsh -s /bin/bash %s" % account["username"])
+    if not shell("chsh -s /bin/bash %s" % account["username"]):
+        return False, "Failed to execute chsh"
+    return True, None
 
 def synchronize_accounts(accounts):
     results = []
@@ -148,14 +156,23 @@ def synchronize_accounts(accounts):
                 results.append({ 'uid' : uid, 'status' : 'user_creation_failed', 'error' : err })
             continue
         if not name_matches(account):
-            update_name(account)
-            results.append({ 'uid' : uid, 'status' : 'user_description_updated' })
+            ok, err = update_name(account)
+            if ok:
+                results.append({ 'uid' : uid, 'status' : 'user_description_updated' })
+            else:
+                results.append({ 'uid' : uid, 'status' : 'name_modification_failed', 'error' : err })
         if not authorized_keys_contains_key(account):
-            add_authorized_key(account)
-            results.append({ 'uid' : uid, 'status' : 'ssh_key_added' })
+            ok, err = add_authorized_key(account)
+            if ok:
+                results.append({ 'uid' : uid, 'status' : 'ssh_key_added' })
+            else:
+                results.append({ 'uid' : uid, 'status' : 'ssh_key_modification_failed', 'error' : err })
         if not login_shell_is_enabled(account):
-            enable_login_shell(account)
-            results.append({ 'uid' : uid, 'status' : 'login_shell_enabled' })
+            ok, err = enable_login_shell(account)
+            if ok:
+                results.append({ 'uid' : uid, 'status' : 'login_shell_enabled' })
+            else:
+                results.append({ 'uid' : uid, 'status' : 'login_shell_enabling_failed', 'error' : err })
     return results
 
 def detect_unmanaged_logins(accounts):
@@ -166,7 +183,7 @@ def detect_unmanaged_logins(accounts):
         if uid < MANAGED_UID_RANGE[0] or uid > MANAGED_UID_RANGE[1]:
             continue
         if uid not in known_accounts:
-            results.append({ 'uid' : uid, 'err' : 'Spurious UID on system in managed UID range that is not known by hackeradmin (%s/%d)' % (u.pw_name, u.pw_uid) })
+            results.append({ 'uid' : uid, 'status' : 'spurious_user', 'err' : 'Uid %d (%s) is in managed range, but not known by hackeradmin' % (u.pw_uid, u.pw_name) })
     return results
 
 def main():
