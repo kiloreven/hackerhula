@@ -10,9 +10,10 @@ import sets
 import time
 import base64
 import shutil
-import argparse
-import urllib2
 import urllib
+import urllib2
+import argparse
+import traceback
 import ConfigParser
 
 MANAGED_UID_RANGE = (10000, 20000)
@@ -249,10 +250,13 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    if args.file:
-        cmd_file(args.file)
-    elif args.poll:
-        cmd_poll()
+    try:
+        if args.file:
+            cmd_file(args.file)
+        elif args.poll:
+            cmd_poll()
+    except:
+        print([{"status" : "fail", "err" : traceback.format_exc()}])
 
 if __name__ == '__main__':
     main()
