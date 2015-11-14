@@ -7,6 +7,7 @@ import sys
 import pwd
 import json
 import sets
+import time
 import base64
 import shutil
 import argparse
@@ -15,6 +16,7 @@ import urllib
 import ConfigParser
 
 MANAGED_UID_RANGE = (10000, 20000)
+SSH_AUTHORIZED_KEYS_PATH = "/etc/ssh/user_keys/%s.pub"
 
 class Config:
     dry_run = False
@@ -103,7 +105,7 @@ def ensure_dir(dir, uid):
     os.close(fd)
 
 def authorized_keys_contains_key(account):
-    keyfile = os.path.expanduser("~%s/.ssh/authorized_keys" % account['username'])
+    keyfile = SSH_AUTHORIZED_KEYS_PATH % account['username']
     desired = sets.ImmutableSet(key.strip() for key in account['authorized_keys'].split("\n"))
     found = sets.ImmutableSet()
     if os.path.isfile(keyfile):
@@ -112,26 +114,22 @@ def authorized_keys_contains_key(account):
     return desired.issubset(found)
 
 def add_authorized_key(account):
-    keyfile = os.path.expanduser("~%s/.ssh/authorized_keys" % account['username'])
+    keyfile = SSH_AUTHORIZED_KEYS_PATH % account['username']
     keys = sets.Set(key.strip() for key in account['authorized_keys'].split("\n"))
-    if os.path.isfile(keyfile):
-        with open(keyfile) as f:
-            for line in f.readlines():
-                keys.add(line.strip())
-    else:
-        if not Config.dry_run:
-            ensure_dir(os.path.expanduser("~%s/.ssh" % account['username']), account['uid'])
     if not Config.dry_run:
+        dir = os.path.dirname(keyfile)
+        if not os.path.isdir(dir):
+            os.makedirs(dir)
         with open(keyfile, "w") as f:
             for key in keys:
                 f.write(key + "\n")
         fd = os.open(keyfile, os.O_RDONLY)
-        os.fchmod(fd, 0644)
+        os.fchmod(fd, 0600)
         os.close(fd)
-        return True
+        return True, None
     else:
-        print("Add SSH key for user %s" % account['username'])
-        return True
+        print("Add SSH key for user %s to %s " % (account['username'], keyfile))
+        return True, None
 
 def login_shell_is_enabled(account):
     u = pwd.getpwuid(account['uid'])
@@ -143,39 +141,45 @@ def enable_login_shell(account):
         return False, "Failed to execute chsh"
     return True, None
 
+def report(uid, code, error=None):
+    if error:
+        return { 'uid' : uid, 'status' : 'fail', 'code' : code, 'timestamp' : int(time.time()), 'error' : error }
+    else:
+        return { 'uid' : uid, 'status' : 'ok', 'code' : code, 'timestamp' : int(time.time()) }
+
 def synchronize_accounts(accounts):
     results = []
     for account in accounts:
         uid = account['uid']
         ok, err = check_username_matches_pid(account)
         if not ok:
-            results.append({ 'uid' : uid, 'status' : 'username_uid_mismatch', 'error' : err })
+            results.append(report(uid, 'username_uid_mismatch', err))
             continue
         if not uid_exists(account):
             ok, err = create_user(account)
             if ok:
-                results.append({ 'uid' : uid, 'status' : 'user_created' })
+                results.append(report(uid, 'user_created'))
             else:
-                results.append({ 'uid' : uid, 'status' : 'user_creation_failed', 'error' : err })
+                results.append(report(uid, 'user_creation_failed', err))
             continue
         if not name_matches(account):
             ok, err = update_name(account)
             if ok:
-                results.append({ 'uid' : uid, 'status' : 'user_description_updated' })
+                results.append(report(uid, 'user_description_updated'))
             else:
-                results.append({ 'uid' : uid, 'status' : 'name_modification_failed', 'error' : err })
+                results.append(report(uid, 'name_modification_failed', err))
         if not authorized_keys_contains_key(account):
             ok, err = add_authorized_key(account)
             if ok:
-                results.append({ 'uid' : uid, 'status' : 'ssh_key_added' })
+                results.append(report(uid, 'ssh_key_added'))
             else:
-                results.append({ 'uid' : uid, 'status' : 'ssh_key_modification_failed', 'error' : err })
+                results.append(report(uid, 'ssh_key_modification_failed', err))
         if not login_shell_is_enabled(account):
             ok, err = enable_login_shell(account)
             if ok:
-                results.append({ 'uid' : uid, 'status' : 'login_shell_enabled' })
+                results.append(report(uid, 'login_shell_enabled'))
             else:
-                results.append({ 'uid' : uid, 'status' : 'login_shell_enabling_failed', 'error' : err })
+                results.append(report(uid, 'login_shell_enabling_failed', err))
     return results
 
 def detect_unmanaged_logins(accounts):
@@ -186,7 +190,7 @@ def detect_unmanaged_logins(accounts):
         if uid < MANAGED_UID_RANGE[0] or uid > MANAGED_UID_RANGE[1]:
             continue
         if uid not in known_accounts:
-            results.append({ 'uid' : uid, 'status' : 'spurious_user', 'err' : 'Uid %d (%s) is in managed range, but not known by hackeradmin' % (u.pw_uid, u.pw_name) })
+            results.append(report(uid, 'spurious_user', 'Uid %d (%s) is in managed range, but not known by hackeradmin' % (u.pw_uid, u.pw_name)))
     return results
 
 def slurp(url, params={}, headers={}):
@@ -244,8 +248,6 @@ def main():
     if not (args.file or args.poll):
         parser.print_help()
         sys.exit(1)
-
-    print args.file
 
     if args.file:
         cmd_file(args.file)
