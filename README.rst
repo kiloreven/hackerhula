@@ -1,5 +1,5 @@
-Administrative interface for Hackeriet
-======================================
+Hula - Administrative interface for Hackeriet
+=============================================
 
 Glorified spreadsheet to manage:
 
@@ -18,7 +18,7 @@ This is how you get going::
   virtualenv --system-site-packages venv
   . ./venv/bin/activate
   pip install -r requirements.txt
-  cd hackeradmin
+  cd hackerhula
   ./manage.py syncdb
   ./manage.py migrate
   # Populate with some fake members.

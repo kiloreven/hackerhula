@@ -1,4 +1,4 @@
-"""hackeradmin URL Configuration
+"""hackerhula URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.8/topics/http/urls/
@@ -20,8 +20,8 @@ from django.views.generic import TemplateView, RedirectView
 from member import urls as member_urls
 
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(url='/hackeradmin/', permanent=False)),
-    url(r'^hackeradmin/$', TemplateView.as_view(template_name="frontpage.html")),
-    url(r'^hackeradmin/member/', include(member_urls)),
-    url(r'^hackeradmin/admin/', include(admin.site.urls)),
+    url(r'^$', RedirectView.as_view(url='/hula/', permanent=False)),
+    url(r'^hula/$', TemplateView.as_view(template_name="frontpage.html")),
+    url(r'^hula/member/', include(member_urls)),
+    url(r'^hula/admin/', include(admin.site.urls)),
 ]
