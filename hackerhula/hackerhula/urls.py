@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.views.generic import TemplateView, RedirectView
 
 from member import urls as member_urls
+from spaceapi import urls as spaceapi_urls
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/hula/', permanent=False)),
     url(r'^hula/$', TemplateView.as_view(template_name="frontpage.html")),
     url(r'^hula/member/', include(member_urls)),
+    url(r'^hula/spaceapi/', include(spaceapi_urls)),
     url(r'^hula/admin/', include(admin.site.urls)),
 ]
