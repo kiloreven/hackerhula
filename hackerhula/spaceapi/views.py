@@ -26,12 +26,12 @@ def spaceapi(request):
             "lat": 59.919293
         },
         "contact": {
-            "email": "styret@hackeriet.no",
+            "email": "styret@NOSPAM__hackeriet.no",
             "irc": "irc://irc.freenode.net/#oslohackerspace",
             "twitter": "@hackeriet"
         },
         "issue_report_channels": [
-            "irc"
+            "email"
         ],
         "projects": [ "https://hackeriet.no/projects/", ],
         "state": {
