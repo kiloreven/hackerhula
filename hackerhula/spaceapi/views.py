@@ -6,7 +6,14 @@ import json
 from .models import RoomState
 
 def spaceapi(request):
-    hackeriet = RoomState.objects.get(roomname="Hackeriet")
+    try:
+        hackeriet = RoomState.objects.get(roomname="Hackeriet")
+    except RoomState.DoesNotExist:
+        # This single default entry doesn't warrant a separate fixture by
+        # itself. Add it on the first load instead.
+        hackeriet = RoomState(roomname="Hackeriet")
+        hackeriet.save()
+
     res = {
         "api": "0.13",
         "space": "Hackeriet Oslo",
