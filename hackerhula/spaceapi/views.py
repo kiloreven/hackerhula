@@ -37,6 +37,7 @@ def spaceapi(request):
         "state": {
             # Switch this when we get the update mechanism going.
             #"open": hackeriet.is_open,
+            #"lastchange": hackeriet.last_updated.strftime("%S"),
             "open": True,
             "message": "Usually open Tuesday evening and Saturdays. See web page or IRC for details."
         }
