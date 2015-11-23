@@ -30,7 +30,6 @@ def basicauth(request):
         accepted = True
 
     elif 'HTTP_AUTHORIZATION' in request.META:
-        pprint(request.META)
         auth = request.META['HTTP_AUTHORIZATION'].split()
         if len(auth) == 2 and auth[0].lower() == "basic":
             username, pw = b64decode(auth[1]).split(':', 1)
