@@ -12,7 +12,7 @@
     <th data-defaultsort="disabled">Name</th>
     <th>Handle</th>
     <th>Email</th>
-    <th>Last changed</th>
+    <th>Member since</th>
     <th></th>
   </tr>
 </thead>
@@ -22,7 +22,7 @@
     <td>{{ member.name }}</td>
     <td>{{ member.handle }}</td>
     <td><a href="mailto:{{ member.email }}">{{ member.email }}</a></td>
-    <td>{{ member.last_modified }}</td>
+    <td>{{ member.member_since|date:"F o" }}</td>
     <td><a href="../admin/member/member/{{member.id}}">edit</a></td>
   </tr>
 {%endfor%}
