@@ -19,6 +19,7 @@ from django.views.generic import TemplateView, RedirectView
 
 from member import urls as member_urls
 from spaceapi import urls as spaceapi_urls
+from brus import urls as brus_urls
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/hula/', permanent=False)),
@@ -26,4 +27,5 @@ urlpatterns = [
     url(r'^hula/member/', include(member_urls)),
     url(r'^hula/spaceapi/', include(spaceapi_urls)),
     url(r'^hula/admin/', include(admin.site.urls)),
+    url(r'^hula/brus/', include(brus_urls)),
 ]
