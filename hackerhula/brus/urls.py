@@ -4,7 +4,7 @@ from django.contrib import admin
 import brus.views
 
 urlpatterns = [
-    url(r'^$', "brus.views.account", name="account"),
-    url(r'^charge$', "brus.views.charge", name="charge"),
+    url(r'^$', "brus.views.account", name="brusaccount"),
+    url(r'^charge$', "brus.views.charge"),
     url('sell', 'brus.views.sell')
 ]
