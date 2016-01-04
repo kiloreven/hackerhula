@@ -6,6 +6,8 @@ Glorified spreadsheet to manage:
 * members.
 * membership payment status.
 * physical keys.
+* hacker coins.
+* account details synchronization.
 
 
 Development setup
