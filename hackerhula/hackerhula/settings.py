@@ -30,6 +30,13 @@ SECRET_KEY = 'iqu=#fm%7-s*45=a3+p^7!4ah)*$nete3+j*eck$b7_-k67rz('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+STRIPE_KEYS = {
+    'secret_key': os.environ['SECRET_KEY'],
+    'publishable_key': os.environ['PUBLISHABLE_KEY']
+}
+
+
+
 ALLOWED_HOSTS = []
 
 
@@ -44,6 +51,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'member',
     'spaceapi',
+    'brus'
 )
 
 MIDDLEWARE_CLASSES = (

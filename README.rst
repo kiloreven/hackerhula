@@ -23,6 +23,6 @@ This is how you get going::
   ./manage.py migrate
   # Populate with some fake members.
   ./manage.py loaddata member/fixtures/small_memberset.json
-  ./manage.py runserver
+  SECRET_KEY=<stripe secret key> PUBLISHABLE_KEY=<stripe publishable key> ./manage.py runserver
 
 
