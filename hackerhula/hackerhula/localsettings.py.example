@@ -1,7 +1,14 @@
 #
 # Installation-specific configuration, usually kept in localsettings.py.
 #
+#
+from os import environ
+
 dbpasswd = 'FOO'
 APICLIENT_USER = "foo"
 APICLIENT_PASSWORD = "foo"
 
+STRIPE_KEYS = {
+    'secret_key': environ.get('SECRET_KEY', "secretkey"),
+    'publishable_key': environ.get('PUBLISHABLE_KEY', "publishablekey")
+}
