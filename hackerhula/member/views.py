@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from hackerhula import settings
-from models import Member, PhysicalAccess
+from .models import Member, PhysicalAccess
 
 @login_required
 def memberlist(request):
