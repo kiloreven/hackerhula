@@ -5,7 +5,7 @@ from pytz import utc
 
 class Member(models.Model):
     memberid = models.IntegerField(help_text="Four digits, increasing from 1000.", unique=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, null=True)
     name = models.CharField(max_length=200)
     handle = models.CharField(max_length=200, blank=True)
     address = models.CharField(max_length=500)
