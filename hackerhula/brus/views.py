@@ -11,6 +11,7 @@ from member.models import Member
 
 stripe.api_key = settings.STRIPE_KEYS['secret_key']
 
+
 def api_basic_auth(func):
     @wraps(func)
     def _decorator(request, *args, **kwargs):
@@ -22,12 +23,14 @@ def api_basic_auth(func):
                 username, password = auth.split(':', 1)
                 machines = Machine.objects.filter(name=username, key=password)
                 if len(machines) > 0:
-                    return func(request, *args, **kwargs, machine=machines[0])
+                    kwargs["machine"] = machines[0]
+                    return func(request, *args, **kwargs)
         response = HttpResponse("Brusmaskins only!!1")
         response.status_code = 401
         response['WWW-Authenticate'] = 'Basic realm="brusmaskins only"'
         return response
     return _decorator
+
 
 @api_basic_auth
 def sell(request, machine):
@@ -51,7 +54,9 @@ def sell(request, machine):
         transactions = Transaction.objects.filter(member=member.user)
         balance = transactions.aggregate(balance=models.Sum('value'))
         if balance >= p.price:
-            transactions(description=p.productname + " sold from " + machine.name, member=member.user, machine=machine, value=-p.price)
+            transactions(description="%s sold from %s" %
+                                     (p.productname, machine.name),
+                         member=member.user, machine=machine, value=-p.price)
             response.write("Sold!")
         else:
             response.write("Insufficient funds")
@@ -61,16 +66,19 @@ def sell(request, machine):
         response.status_code = 400
     return response
 
+
 @login_required
 def account(request):
-    res = {}
     uid = request.user.id
     transactions = Transaction.objects.filter(member=uid)
     balance = transactions.aggregate(balance=models.Sum('value'))
+
+    res = {}
     res["history"] = transactions
     res["balance"] = balance["balance"]
     res["key"] = settings.STRIPE_KEYS['publishable_key']
     return render(request, "account.html", res)
+
 
 @login_required
 def charge(request):
@@ -79,7 +87,7 @@ def charge(request):
     form = PayForm(request.POST)
 
     if form.is_valid():
-        #Todo store this
+        # TODO: Store this.
         customer = stripe.Customer.create(
             email=request.user.email,
             card=form.cleaned_data['stripeToken']
@@ -92,11 +100,13 @@ def charge(request):
             description='Hackeriet'
         )
 
-        t = Transaction(member=request.user, value=(int(form.cleaned_data['amountt'])/100), description="Transfer with Stripe.")
+        t = Transaction(member=request.user,
+                        # Int. division on purpose.
+                        value=(int(form.cleaned_data['amountt']) / 100),  #
+                        description="Transfer with Stripe.")
         t.save()
         res = {}
         res["amount"] = int(form.cleaned_data['amountt'])/100
 
         return render(request, 'charge.html', res)
-    return "Hello."
-
+    return HttpResponse("Invalid request", status_code=400)
