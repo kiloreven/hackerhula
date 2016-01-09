@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Script that picks out crontab information from scripts and put it into
+# the running crontab.
+#
+TMPFILE=$(tempfile)
+
+ACTIVE=$(crontab -l | grep -i hackerhula-start)
+
+if [ -z "$ACTIVE" ]; then
+    echo "No magic marker in current crontab, REFUSING to insert new jobs"
+    exit 1;
+fi
+
+crontab -l | sed '/^# hackerhula-start/q' > $TMPFILE
+git grep CRONMARKER | grep -v deploy-crontab | sed -e 's/^/\n# /' -e 's/:# CRONMARKER: /\n/'  >> $TMPFILE
+echo "# hackerhula-end" >> $TMPFILE
+crontab -l | sed '1,/^# hackerhula-end/d' >> $TMPFILE
+
+crontab $TMPFILE
+if [ $? != 0 ]; then
+    cat $TMPFILE;
+fi
+rm $TMPFILE

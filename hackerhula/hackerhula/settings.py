@@ -89,7 +89,7 @@ DATABASES = {
     }
 }
 
-if os.uname()[1] == "blade":
+if os.uname()[1] == "bladeXX":
     DATABASES = {'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'hackeradmindb',
