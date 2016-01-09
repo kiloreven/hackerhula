@@ -45,7 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'member',
     'spaceapi',
-    'brus'
+    'coin'
 )
 
 MIDDLEWARE_CLASSES = (
