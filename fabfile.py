@@ -25,6 +25,7 @@ def deploy():
     with settings(warn_only=True):
         if run("test -d hackerhula").failed:
             run("git clone https://github.com/hackeriet/hackerhula.git")
+            run("cd hackerhula/hackerhula/hackerhula && ln -s $HOME/config/localsettings.py")
 
     with settings(warn_only=True):
         if run("test -d venv").failed:
