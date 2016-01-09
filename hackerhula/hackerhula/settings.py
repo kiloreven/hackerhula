@@ -32,6 +32,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = "/hula/admin/login/"
+
 # Application definition
 
 INSTALLED_APPS = (
