@@ -1,4 +1,6 @@
 Django==1.8.5
 pytz
 stripe
+# Only needed for development, but not worth splitting it in two.
+# Do "apt-get install fabric" on prod to avoid crypto in venv/.
 fabric
