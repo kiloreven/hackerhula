@@ -35,7 +35,7 @@ def deploy():
     with cd("hackerhula"):
         run("git pull")
         run("git checkout master")
-        #run("../venv/bin/python hackerhula/manage.py collectstatic --noinput")
+        run("../venv/bin/python hackerhula/manage.py collectstatic --noinput")
         run("../venv/bin/python hackerhula/manage.py migrate --noinput")
         run("./deploy-crontab")
     run("touch .reload")
