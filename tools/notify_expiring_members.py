@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
         logging.debug("Notification schedule is: %s" % str(notification_schedule))
         if today in notification_schedule:
-            logging.info("Sending notification to %s." % membership.member.email)
+            logging.debug("Sending notification to %s." % membership.member.email)
             send_notification(membership)
         else:
             logging.debug("Nothing to do")
