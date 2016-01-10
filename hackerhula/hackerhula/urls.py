@@ -17,9 +17,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView, RedirectView
 
-from django.conf import settings
-from django.conf.urls.static import static
-
 from member import urls as member_urls
 from spaceapi import urls as spaceapi_urls
 from coin import urls as coin_urls
@@ -32,6 +29,3 @@ urlpatterns = [
     url(r'^hula/admin/', include(admin.site.urls)),
     url(r'^hula/coin/', include(coin_urls)),
 ]
-
-# Serve the static files ourselves.
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
