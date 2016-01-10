@@ -48,9 +48,12 @@ def send_notification(membership):
     msg = MIMEText(body)
     msg["Subject"] = u"Medlemsskap løper ut"
     msg["From"] = u"Hackeriet <styret@hackeriet.no>"
-    #msg["To"] = membership.member.email
-    #msg["Cc"] = u"lasse.karstensen@gmail.com"
-    msg["To"] = u"lasse.karstensen@gmail.com"
+
+    if 1:
+        msg["To"] = membership.member.email
+        msg["Cc"] = u"lasse.karstensen@gmail.com"
+    else:
+        msg["To"] = u"lasse.karstensen@gmail.com"
 
     if "--run" in sys.argv:
         s = smtplib.SMTP(SMTPSERVER)
