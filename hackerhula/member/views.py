@@ -13,7 +13,7 @@ from .models import Member, PhysicalAccess
 @login_required
 def memberlist(request):
     res = {}
-    res["members"] = Member.objects.all()
+    res["members"] = Member.objects.filter(active_membership=True)
     return render(request, "memberlist.html", res)
 
 
