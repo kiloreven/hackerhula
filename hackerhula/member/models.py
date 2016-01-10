@@ -81,7 +81,53 @@ class PhysicalAccess(models.Model):
 
         return True
 
-#class Membership(models.Model):
-#    start_date = models.DateTimeField("Membership start date")
-#    running = models.BooleanField("This membership is continous")
-#    end_date = models.DateTimeField("Membership end date")
+
+class Membership(models.Model):
+    """
+    Memberships are:
+        * Tied to a specific Member.
+        * Can be discontinuous, as members forget to pay or have other priorities for a year.
+
+    To discern if a valid membership is present, we will simply look for a paid
+    one that covers the current date.
+
+    """
+    member = models.ForeignKey(Member)
+    added_at = models.DateTimeField("When the membership entry was first added",
+                                    auto_now_add=True)
+    changed_at = models.DateTimeField("When was the membership entry last changed.",
+                                    auto_now=True)
+    paid = models.BooleanField("Has this membership been paid?", default=True)
+    paid = models.BooleanField("Has this membership been paid?", default=True)
+
+    start_date = models.DateField("Membership start date", auto_now_add=True)
+    running = models.BooleanField("This membership is continuous", default=False)
+    end_date = models.DateField("Membership end date. NOOP if is continuous.", null=True)
+
+    description = models.TextField("Additional notes", blank=True)
+
+    def __unicode__(self):
+        return "<Membership for %s expiring %s>" % \
+               (self.member.name, self.end_date)
+
+    def valid(self, ts=None):
+        "Is this Membership valid right now?"
+        if ts is None:
+            ts = datetime.now(utc)
+        if not self.paid:
+            return False
+
+        if self.start_date > ts:
+            return False
+
+        if self.running is True:
+            return True
+
+        # If it isn't continuous, it needs an end date to be valid.
+        if self.running is False and self.end_date is None:
+            return False
+
+        if self.end_date < ts:
+            return False
+
+        return True
