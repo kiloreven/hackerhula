@@ -13,7 +13,7 @@ if [ -z "$ACTIVE" ]; then
 fi
 
 crontab -l | sed '/^# hackerhula-start/q' > $TMPFILE
-git grep CRONMARKER | grep -v deploy-crontab | sed -e 's/^/\n# /' -e 's/:# CRONMARKER: /\n/'  >> $TMPFILE
+git grep CRONMARKER | grep -v crontab-deploy | sed -e 's/^/\n# /' -e 's/:# CRONMARKER: /\n/'  >> $TMPFILE
 echo "# hackerhula-end" >> $TMPFILE
 crontab -l | sed '1,/^# hackerhula-end/d' >> $TMPFILE
 
