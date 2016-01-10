@@ -36,9 +36,9 @@ def api_basic_auth(func):
 def sell(request, machine):
     response = HttpResponse()
 
-    if 'product' in request.GET and 'userhash' in request.GET:
-        product = request.GET['product'][0]
-        userhash = request.GET['hash'][0]
+    if 'product' in request.GET and 'hash' in request.GET:
+        product = request.GET['product']
+        userhash = request.GET['hash']
         if product == "0":
             p = machine.product0
         elif product == "1":
@@ -50,13 +50,15 @@ def sell(request, machine):
         elif product == "4":
             p = machine.product4
 
-        member = Member.objects.filter(access_card=userhash)
+        member = Member.objects.get(access_card=userhash)
         transactions = Transaction.objects.filter(member=member.user)
-        balance = transactions.aggregate(balance=models.Sum('value'))
+        balance = transactions.aggregate(balance=models.Sum('value'))['balance']
         if balance >= p.price:
-            transactions(description="%s sold from %s" %
-                                     (p.productname, machine.name),
-                         member=member.user, machine=machine, value=-p.price)
+            t = Transaction(description="%s sold from %s" %
+                                        (p.productname, machine.name),
+				            member=member.user, machine=machine,
+                            value=-p.price)
+            t.save()
             response.write("Sold!")
         else:
             response.write("Insufficient funds")
