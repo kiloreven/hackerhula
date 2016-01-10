@@ -5,7 +5,7 @@ Notify nettlaug members that a new period is starting.
 
 Author: Lasse Karstensen <lasse.karstensen@gmail.com>, January 2016.
 
-# CRONMARKER: 00 08 * 21 mar,jun,sep,dec * cd $HOME/hackerhula/tools/ && # $HOME/venv/bin/python notify_nettlaug.py -v --run
+# CRONMARKER: 00 08 21 mar,jun,sep,dec * cd $HOME/hackerhula/tools/ && $HOME/venv/bin/python notify_nettlaug.py -v --run
 """
 import codecs
 import smtplib
