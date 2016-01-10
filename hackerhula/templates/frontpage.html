@@ -1,26 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Member list{%endblock%}
+{% block title %}Hackerhula{%endblock%}
 {% block main %}
-<h1>Hula - Hackeriet member site</h1>
+<h1>Hula - Hackeriet sin medlemshule</h1>
 
-<h3>Components</h3>
+<h4>Innhold</h4>
 <ul>
-  <li><a href="{% url "memberlist" %}">Member list</a></li>
-  <li><a href="{% url "dooraccess" %}">Access tokens for doors (json)</a> (internal)</li>
-  <li><a href="{% url "unixaccount" %}">UNIX users (json)</a> (internal)</li>
-  <li><a href="{% url "spaceapi_endpoint" %}">SpaceAPI JSON</a></li>
+  <li><a href="{% url "memberlist" %}">Liste over medlemmer</a></li>
+  <li><a href="{% url "coinaccount" %}">Administrer jeres hackercoins</a></li>
 </ul>
 
-<h3>Manage</h3>
-  <ul>
-     <li><a href="{% url "coinaccount" %}">hackercoin</a></li>
-     <li><a href="{% url "admin:index" %}member/member/">Member administration</a></li>
-     <li><a href="{% url "admin:index" %}member/physicalaccess/">Non-member access cards</a></li>
-  </ul>
+<h4>Linker</h3>
+<ul>
+  <li>Wikien sin node om <a href="https://hackeriet.no/membership/">medlemsvilkår</a>, inkl. kontonummer.</li>
+  <li><a href="https://hackeriet.no/hausrom/">Hausrom romoversikt</a> (haus/haus)</li>
+</ul>
 
-<h3>Links</h3>
-  <ul>
-    <li><a href="https://hackeriet.no/hausrom/">Hausrom site</a> (haus/haus)</li>
-  </ul>
+<h4>For styret</h4>
+<ul>
+   <li><a href="{% url "admin:index" %}member/member/">Administrer medlemmer</a></li>
+   <li><a href="{% url "admin:index" %}member/physicalaccess/">Tilgangskort for ikke-medlemmer</a></li>
+</ul>
+
+<!--
+<h4>API endpoints</h4>
+<ul>
+  <li><a href="{% url "dooraccess" %}">Dørtilgang (json)</a> (internal)</li>
+  <li><a href="{% url "unixaccount" %}">UNIX-brukere med nøkler (json)</a> (internal)</li>
+  <li><a href="{% url "spaceapi_endpoint" %}">SpaceAPI</a></li>
+</h4>
+-->
 
 {%endblock%}
