@@ -104,7 +104,7 @@ def charge(request):
 
         t = Transaction(member=request.user,
                         # Int. division on purpose.
-                        value=(int(form.cleaned_data['amountt']) / 100),  #
+                        value=(int(form.cleaned_data['amountt']) / 100),
                         description="Transfer with Stripe.")
         t.save()
         res = {}
