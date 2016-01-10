@@ -5,7 +5,7 @@ Notify expiring members.
 
 Author: Lasse Karstensen <lasse.karstensen@gmail.com>, January 2016.
 
-# CRONMARXXKER: 00 09 * * * cd $HOME/hackerhula/tools/ && ./notify_expiring_members.py --run
+# CRONMARKER: 00 09 * * * cd $HOME/hackerhula/tools/ && $HOME/venv/bin/python notify_expiring_members.py --run
 """
 import codecs
 import smtplib
