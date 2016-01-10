@@ -89,9 +89,11 @@ def charge(request):
     form = PayForm(request.POST)
 
     if form.is_valid():
+        member = Member.objects.get(user=request.user)
+         
         # TODO: Store this.
         customer = stripe.Customer.create(
-            email=request.user.email,
+            email=member.email,
             card=form.cleaned_data['stripeToken']
         )
 
@@ -102,8 +104,8 @@ def charge(request):
             description='Hackeriet'
         )
 
-        t = Transaction(member=request.user,
-                        # Int. division on purpose.
+        t = Transaction(member=uid,
+                        # Int. division on purpose,
                         value=(int(form.cleaned_data['amountt']) / 100),
                         description="Transfer with Stripe.")
         t.save()
