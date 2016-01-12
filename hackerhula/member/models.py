@@ -107,8 +107,12 @@ class Membership(models.Model):
     description = models.TextField("Additional notes", blank=True)
 
     def __unicode__(self):
-        return "<Membership for %s expiring %s>" % \
-               (self.member.name, self.end_date)
+        if self.running:
+            expiry = "[recurring]"
+        else:
+            today = datetime.today()
+            expiry = "%i days left" % (self.end_date - today.date()).days
+        return "<Membership %s %s>" % (self.member.name, expiry)
 
     def valid(self, ts=None):
         "Is this Membership valid right now?"
