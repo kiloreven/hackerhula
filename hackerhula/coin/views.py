@@ -90,7 +90,7 @@ def charge(request):
 
     if form.is_valid():
         member = Member.objects.get(user=request.user)
-         
+
         # TODO: Store this.
         customer = stripe.Customer.create(
             email=member.email,
