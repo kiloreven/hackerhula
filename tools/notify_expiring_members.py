@@ -97,11 +97,11 @@ if __name__ == "__main__":
                           membership.member)
             continue
 
-        notification_schedule = map(lambda x: membership.end_date +
+        schedule = map(lambda x: membership.end_date +
                                     timedelta(days=x), notification_schedule)
 
-        logging.debug("Notification schedule is: %s" % str(notification_schedule))
-        if today in notification_schedule:
+        logging.debug("Notification schedule is: %s" % str(schedule))
+        if today in schedule:
             logging.debug("Sending notification to %s." % membership.member.email)
             send_notification(membership)
         else:
