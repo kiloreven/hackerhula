@@ -8,3 +8,4 @@ fabric
 pillow
 django-extensions
 ipython
+Werkzeug
