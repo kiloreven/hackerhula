@@ -1,0 +1,6 @@
+# This is just a file containing which packages you need to install with yum/dnf on RHEL/Centos/Fedora
+
+python-virtualenv   # Because you can't pip install without pip
+postgresql          # For the postgres python backend
+openjpeg            # For pillow
+zlib-devel          # For pillow
