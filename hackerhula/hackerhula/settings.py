@@ -77,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'hackerhula.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 
 # Database
